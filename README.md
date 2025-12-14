@@ -41,7 +41,7 @@
 | Backend | Node.js + Express | FREE ✅ |
 | Database | PostgreSQL | FREE ✅ |
 | Cache/Queue | Redis | FREE ✅ |
-| AI Service | Google Gemini 1.5 Flash | FREE ✅ |
+| AI Service | Google Gemini 2.5 Flash | FREE ✅ |
 | Code Analysis | Custom Engine | FREE ✅ |
 | Deployment | Docker | FREE ✅ |
 
