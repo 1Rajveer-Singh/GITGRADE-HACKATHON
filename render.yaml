@@ -1,0 +1,83 @@
+# Render Deployment Configuration
+# This file tells Render how to build and deploy your backend
+
+services:
+  # Backend API Service
+  - type: web
+    name: gitgrade-backend
+    runtime: node
+    region: oregon
+    plan: free
+    branch: main
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: node src/server.js
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5000
+      - key: GITHUB_TOKEN
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: DB_HOST
+        fromDatabase:
+          name: gitgrade-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: gitgrade-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: gitgrade-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: gitgrade-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: gitgrade-db
+          property: password
+      - key: REDIS_HOST
+        fromService:
+          type: redis
+          name: gitgrade-redis
+          property: host
+      - key: REDIS_PORT
+        fromService:
+          type: redis
+          name: gitgrade-redis
+          property: port
+      - key: MAX_FILES
+        value: 1000
+      - key: MAX_FILE_SIZE
+        value: 1048576
+      - key: ANALYSIS_TIMEOUT
+        value: 180000
+      - key: RATE_LIMIT_WINDOW_MS
+        value: 3600000
+      - key: RATE_LIMIT_MAX_REQUESTS
+        value: 10
+      - key: API_KEY_DAILY_LIMIT
+        value: 50
+      - key: API_KEY_MONTHLY_LIMIT
+        value: 1000
+
+databases:
+  # PostgreSQL Database
+  - name: gitgrade-db
+    region: oregon
+    plan: free
+    databaseName: gitgrade
+    user: gitgrade_user
+    ipAllowList: []
+
+  # Redis Cache
+  - name: gitgrade-redis
+    region: oregon
+    plan: free
+    ipAllowList: []

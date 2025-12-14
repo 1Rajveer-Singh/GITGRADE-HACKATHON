@@ -21,8 +21,17 @@ app.use(helmet());
 
 // CORS middleware
 app.use(cors({
-  origin: config.frontendUrl,
+  origin: process.env.NODE_ENV === 'production' 
+    ? [
+        'https://gitgrade.vercel.app',
+        'https://*.vercel.app',
+        /\.vercel\.app$/,
+        config.frontendUrl
+      ].filter(Boolean)
+    : '*',
   credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'X-API-Key']
 }));
 
 // Compression middleware

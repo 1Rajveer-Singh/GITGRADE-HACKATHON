@@ -47,6 +47,8 @@
 
 ## 🚀 Quick Start
 
+### Local Development (Docker)
+
 ### Prerequisites
 
 - Node.js 18+ (FREE)
@@ -127,6 +129,8 @@ npm run dev
 
 ## 📖 Usage
 
+### Local Development
+
 1. Open http://localhost:3000
 2. **Get your FREE API key** (optional but recommended):
    - Click "Setup API Key" in the header
@@ -138,6 +142,37 @@ npm run dev
 5. Wait 1-3 minutes for analysis
 6. View your score, summary, and personalized roadmap!
 
+### Production Deployment
+
+**📦 Deploy to Vercel + Render (FREE)**
+
+See [VERCEL_DEPLOYMENT.md](VERCEL_DEPLOYMENT.md) for complete deployment guide.
+
+Quick steps:
+1. **Deploy Backend to Render.com** (FREE):
+   ```bash
+   # Run the deployment helper
+   .\deploy-render.ps1
+   ```
+   - Creates PostgreSQL + Redis + Backend
+   - Note your backend URL
+
+2. **Deploy Frontend to Vercel** (FREE):
+   ```bash
+   # Install Vercel CLI
+   npm i -g vercel
+   
+   # Login and deploy
+   vercel login
+   vercel env add VITE_API_URL production
+   # Enter: https://your-backend.onrender.com
+   vercel --prod
+   ```
+
+**🌐 Your app is live!**
+- Frontend: `https://your-app.vercel.app`
+- Backend: `https://your-backend.onrender.com`
+
 ### API Key Benefits
 
 ✅ **Higher Limits**: 50 analyses/day vs 10/hour without key
@@ -145,6 +180,7 @@ npm run dev
 ✅ **Persistent Access**: Works across devices and browsers
 ✅ **Priority Processing**: Faster queue times
 ✅ **100% FREE**: No credit card required
+
 
 ## 🎯 Scoring Breakdown
 
