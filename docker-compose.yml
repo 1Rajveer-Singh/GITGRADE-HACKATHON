@@ -1,0 +1,89 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database (FREE)
+  postgres:
+    image: postgres:15-alpine
+    container_name: gitgrade-postgres
+    environment:
+      POSTGRES_DB: gitgrade
+      POSTGRES_USER: gitgrade_user
+      POSTGRES_PASSWORD: gitgrade_secure_password_2024
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U gitgrade_user"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # Redis Cache & Queue (FREE)
+  redis:
+    image: redis:7-alpine
+    container_name: gitgrade-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # Backend API (FREE)
+  backend:
+    build: ./backend
+    container_name: gitgrade-backend
+    ports:
+      - "5000:5000"
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=production
+      - PORT=5000
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=gitgrade
+      - DB_USER=gitgrade_user
+      - DB_PASSWORD=gitgrade_secure_password_2024
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Frontend (FREE)
+  frontend:
+    build: ./frontend
+    container_name: gitgrade-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - VITE_API_URL=http://localhost:5000/api
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  redis_data:
